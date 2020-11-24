@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS Reference VS Copy</title>
+</head>
+<body>
+
+  <script>
+    // start with strings, numbers and booleans
+    let age = 15
+    let age2 = age
+    console.log(age, age2) // 15, 15
+    age = 18
+    console.log(age, age2) // 18, 15
+
+    let name = 'jinsu'
+    let name2 = name;
+    console.log(name, name2) //jinsu, jinsu
+    name = 'minho';
+    console.log(name, name2) // minho, jinsu
+
+    // Let's say we have an array
+    const players = ['Wes', 'Sarah', 'Ryan', 'Poppy'];
+
+    // and we want to make a copy of it.
+    const team = players;
+    console.log(team) // ['Wes', 'Sarah', 'Ryan', 'Poppy']
+
+    // You might think we can just do something like this:
+    team[3] = 'Lux'
+    console.log(team, players) // ['Wes', 'Sarah', 'Ryan', 'Lux'], ['Wes', 'Sarah', 'Ryan', 'Lux']
+
+    // however what happens when we update that array?
+
+    // now here is the problem!
+
+    // oh no - we have edited the original array too!
+
+    // Why? It's because that is an array reference, not an array copy. They both point to the same array!
+
+    // So, how do we fix this? We take a copy instead!
+
+    // one way
+    const team2 = players.slice();
+    team2[3] = 'Rain'
+    console.log(players, team2) // ['Wes', 'Sarah', 'Ryan', 'Poppy'], ['Wes', 'Sarah', 'Ryan', 'Rain']
+    // or create a new array and concat the old one in
+    const team3 = [].concat(players);
+    team3[3] = 'Rain'
+    console.log(players, team3) // ['Wes', 'Sarah', 'Ryan', 'Poppy'], ['Wes', 'Sarah', 'Ryan', 'Rain']
+    // or use the new ES6 Spread
+    const team4 = [...players]
+    team4[3] = 'Rain'
+    console.log(players, team4) // ['Wes', 'Sarah', 'Ryan', 'Poppy'], ['Wes', 'Sarah', 'Ryan', 'Rain']
+
+    const team5 =  Array.from(players)
+    team5[3] = 'Rain'
+    console.log(players, team5) // ['Wes', 'Sarah', 'Ryan', 'Poppy'], ['Wes', 'Sarah', 'Ryan', 'Rain']
+    // now when we update it, the original one isn't changed
+
+    // The same thing goes for objects, let's say we have a person object
+
+    // with Objects
+    const person = {
+      name: 'Wes Bos',
+      age: 80
+    };
+
+    // and think we make a copy:
+    const captain = person
+    captain.number = 99
+    console.log(person, captain) // {name: 'Wes Bos', age: 80, number: 99}, {name: 'Wes Bos', age: 80, number: 99}
+    
+    // how do we take a copy instead?
+    const cap2 = Object.assign({}, person, {number: 99, age: 12})
+    console.log(person, cap2) // {name: 'Wes Bos', age: 80}, {name: 'Wes Bos', age: 12, number: 99}
+
+    // We will hopefully soon see the object ...spread
+    const cap3 = {...person}
+    cap3.number = 99
+    cap3.age = 12
+    console.log(person, cap3) //{name: 'Wes Bos', age: 80, number: 99}, {name: 'Wes Bos', age: 12, number: 99}
+
+    // Things to note - this is only 1 level deep - both for Arrays and Objects. lodash has a cloneDeep method, but you should think twice before using it.
+    const wes = {
+        name: 'Wes',
+        age: 100,
+        social: {
+            twitter: '@wesbos',
+            facebook: 'wesbos.developer'
+        }
+    }
+    
+    const dev2 = Object.assign({}, wes)
+
+    // dev2.name = 'jinsu'
+    // dev2.social.facebook = 'jinsu'
+    console.clear()
+    console.log(wes, dev2)
+    /* 
+    {
+        name: 'Wes',
+        age: 100,
+        social: {
+            twitter: '@wesbos',
+            facebook: 'jinsu'
+        }
+    },
+    {
+        name: 'jinsu',
+        age: 100,
+        social: {
+            twitter: '@wesbos',
+            facebook: 'jinsu'
+        }
+    }
+    */
+
+    const dev3 = JSON.parse(JSON.stringify(wes))
+    dev3.social.twitter = 'jinsu'
+    console.clear()
+    console.log(wes, dev3)
+/*
+{
+        name: 'Wes',
+        age: 100,
+        social: {
+            twitter: '@wesbos',
+            facebook: 'wesbos.developer'
+        }
+    },
+    {
+        name: 'Wes',
+        age: 100,
+        social: {
+            twitter: 'jinsu',
+            facebook: 'wesbos.developer'
+        }
+    }
+*/
+  </script>
+
+</body>
+</html>
